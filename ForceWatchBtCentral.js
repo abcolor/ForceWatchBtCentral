@@ -41,25 +41,29 @@ noble.on('discover', function(peripheral) {
 	winston.log('debug', 'on -> discover: ' + peripheral);
 	noble.stopScanning();
 
-  	peripheral.on('connect', function() {
+  	peripheral.once('connect', function() {
     	winston.log('debug', 'on -> connect');
-    	this.updateRssi();
-
+    	
+    	this.discoverServices();
+    	
     	eventEmitter.emit('connect');
   	});
 
-  	peripheral.on('disconnect', function() {
+  	peripheral.once('disconnect', function() {
     	winston.log('debug', 'on -> disconnect');
 
     	eventEmitter.emit('disconnect');
+
+  		noble.stopScanning();
+		noble.startScanning([serviceUUID], true);			
   	});
 
-  	peripheral.on('rssiUpdate', function(rssi) {    	
+  	peripheral.once('rssiUpdate', function(rssi) {    	
     	winston.log('debug', 'on -> RSSI update ' + rssi);
-    	this.discoverServices();
+    	
   	});
 
-  	peripheral.on('servicesDiscover', function(services) {
+  	peripheral.once('servicesDiscover', function(services) {
 
   		winston.log('debug', 'on -> peripheral services discovered ' + services);    	
     	
@@ -70,12 +74,12 @@ noble.on('discover', function(peripheral) {
 				
 				winston.log('debug', 'found ForceWatch service');
 
-		    	service.on('includedServicesDiscover', function(includedServiceUuids) {		      		
+		    	service.once('includedServicesDiscover', function(includedServiceUuids) {		      		
 		      		winston.log('debug', 'on -> service included services discovered ' + includedServiceUuids);
 		      		this.discoverCharacteristics();
 		    	});
 
-		    	service.on('characteristicsDiscover', function(characteristics) {
+		    	service.once('characteristicsDiscover', function(characteristics) {
 
 		    		winston.log('debug', 'on -> service characteristics discovered ' + characteristics);		      		
 

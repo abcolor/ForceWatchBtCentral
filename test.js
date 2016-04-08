@@ -17,4 +17,4 @@ btService.on('data', function(data){
 });
 
 // set current app/ website name
-btService.setCurrentAppName('facebook');
+btService.setCurrentAppName('youtube');
