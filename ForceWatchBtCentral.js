@@ -13,7 +13,7 @@ var eventEmitter = new events.EventEmitter();
 var currentApp = '';
 
 exports.startPeripheralScan = function() {
-	noble.on('stateChange', function(state) {
+	noble.once('stateChange', function(state) {
 		if (state === 'poweredOn') {
 			//noble.startScanning();
 			noble.startScanning([serviceUUID], true);			
@@ -54,6 +54,7 @@ noble.on('discover', function(peripheral) {
 
     	eventEmitter.emit('disconnect');
 
+    	console.log('reconnecting...');
   		noble.stopScanning();
 		noble.startScanning([serviceUUID], true);			
   	});
